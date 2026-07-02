@@ -1,23 +1,34 @@
 # JCJoystick
 
-[![CI Status](https://img.shields.io/travis/JoongChangYang/JCJoystick.svg?style=flat)](https://travis-ci.org/JoongChangYang/JCJoystick)
-[![Version](https://img.shields.io/cocoapods/v/JCJoystick.svg?style=flat)](https://cocoapods.org/pods/JCJoystick)
-[![License](https://img.shields.io/cocoapods/l/JCJoystick.svg?style=flat)](https://cocoapods.org/pods/JCJoystick)
-[![Platform](https://img.shields.io/cocoapods/p/JCJoystick.svg?style=flat)](https://cocoapods.org/pods/JCJoystick)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+[![Platform](https://img.shields.io/badge/platform-iOS-lightgrey.svg)](https://developer.apple.com/ios/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+To run the example project, clone the repo and open `Example/JCJoystick.xcodeproj`.
 
 ## Requirements
 
+- iOS 12.0+
+- Swift 5.0+
+
 ## Installation
 
-JCJoystick is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+### Swift Package Manager
 
-```ruby
-pod 'JCJoystick'
+Add JCJoystick to the `dependencies` in your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/didwndckd/JCJoystick.git", from: "1.0.3")
+]
+```
+
+Or in Xcode, go to **File > Add Packages...** and enter the repository URL:
+
+```
+https://github.com/didwndckd/JCJoystick.git
 ```
 
 ## Usage

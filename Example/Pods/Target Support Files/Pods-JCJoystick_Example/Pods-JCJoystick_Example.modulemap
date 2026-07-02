@@ -1,6 +1,0 @@
-framework module Pods_JCJoystick_Example {
-  umbrella header "Pods-JCJoystick_Example-umbrella.h"
-
-  export *
-  module * { export * }
-}
