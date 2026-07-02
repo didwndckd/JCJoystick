@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -16,6 +16,11 @@ let package = Package(
         .target(
             name: "JCJoystick",
             path: "JCJoystick/Sources"
+        ),
+        .testTarget(
+            name: "JCJoystickTests",
+            dependencies: ["JCJoystick"],
+            path: "JCJoystick/Tests"
         )
     ]
 )
