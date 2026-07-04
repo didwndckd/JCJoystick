@@ -11,11 +11,18 @@ import JCJoystick
 
 final class ViewController: UIViewController {
 
+    private enum AngleType {
+        case degree
+        case radian
+    }
+
     @IBOutlet private weak var angleLabel: UILabel!
     @IBOutlet private weak var rangeLabel: UILabel!
     @IBOutlet private weak var joystickView: JCJoystickView!
     @IBOutlet private weak var thumbDiameterMultiplierLabel: UILabel!
-    
+
+    private var angleType: AngleType = .degree
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
@@ -28,7 +35,7 @@ final class ViewController: UIViewController {
     
     private func setupUI() {
         self.joystickView.delegate = self
-        self.log(value: .zero)
+        self.resetLog()
         
         let boundaryView = self.joystickView.boundaryView
         let topMarkingView = createMarkingView(isVertical: true)
@@ -65,27 +72,38 @@ final class ViewController: UIViewController {
         return view
     }
 
-    private func log(value: JCJoystickValue) {
-        switch self.joystickView.angleValueType {
+    private func log(state: JCJoystickState) {
+        switch self.angleType {
         case .degree:
-            self.angleLabel.text = "degree: \(value.angle)"
+            self.angleLabel.text = "degree: \(state.degree)"
         case .radian:
-            self.angleLabel.text = "radian: \(value.angle)"
+            self.angleLabel.text = "radian: \(state.radian)"
         }
-        
-        self.rangeLabel.text = "range: \(value.movementRange)"
+
+        self.rangeLabel.text = "range: \(state.distanceRatio)"
     }
-    
+
+    private func resetLog() {
+        switch self.angleType {
+        case .degree:
+            self.angleLabel.text = "degree: 0.0"
+        case .radian:
+            self.angleLabel.text = "radian: 0.0"
+        }
+
+        self.rangeLabel.text = "range: 0.0"
+    }
+
     @IBAction private func selectedAngleType(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            self.joystickView.angleValueType = .degree
+            self.angleType = .degree
         case 1:
-            self.joystickView.angleValueType = .radian
+            self.angleType = .radian
         default:
             break
         }
-        self.log(value: .zero)
+        self.resetLog()
     }
     
     
@@ -113,22 +131,22 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: JCJoystickViewDelegate {
-    func joystickView(joystickView: JCJoystickView, shouldDrag value: JCJoystickValue) -> Bool {
-        print("\(#function) -> \(value)")
+    func joystickView(joystickView: JCJoystickView, shouldDrag state: JCJoystickState) -> Bool {
+        print("\(#function) -> \(state)")
         return true
     }
-    
-    func joystickView(joystickView: JCJoystickView, beganDrag value: JCJoystickValue) {
-        print("\(#function) -> \(value)")
+
+    func joystickView(joystickView: JCJoystickView, beganDrag state: JCJoystickState) {
+        print("\(#function) -> \(state)")
     }
-    
-    func joystickView(joystickView: JCJoystickView, didDrag value: JCJoystickValue) {
-        print("\(#function) -> \(value)")
-        self.log(value: value)
+
+    func joystickView(joystickView: JCJoystickView, didDrag state: JCJoystickState) {
+        print("\(#function) -> \(state)")
+        self.log(state: state)
     }
-    
-    func joystickView(joystickView: JCJoystickView, didEndDrag value: JCJoystickValue) {
-        print("\(#function) -> \(value)")
+
+    func joystickView(joystickView: JCJoystickView, didEndDrag state: JCJoystickState) {
+        print("\(#function) -> \(state)")
     }
-    
+
 }
