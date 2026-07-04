@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,8 +16,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = makeTabBarController()
+        window.makeKeyAndVisible()
+        self.window = window
         return true
+    }
+
+    private func makeTabBarController() -> UITabBarController {
+        // UIKit 샘플 (기존 Main.storyboard)
+        let uikitViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+            ?? UIViewController()
+        uikitViewController.tabBarItem = UITabBarItem(
+            title: "UIKit",
+            image: UIImage(systemName: "gamecontroller"),
+            tag: 0
+        )
+
+        // SwiftUI 샘플 (JCJoystick 네이티브 뷰)
+        let swiftUIViewController = UIHostingController(rootView: JoystickSampleView())
+        swiftUIViewController.tabBarItem = UITabBarItem(
+            title: "SwiftUI",
+            image: UIImage(systemName: "gamecontroller.fill"),
+            tag: 1
+        )
+
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [uikitViewController, swiftUIViewController]
+        return tabBarController
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
