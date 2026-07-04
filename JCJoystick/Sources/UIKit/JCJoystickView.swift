@@ -66,10 +66,7 @@ open class JCJoystickView: UIView {
     open func endDrag() {
         let state = createCalculator().calculate(location: self.boundaryView.centerPoint)
         
-        guard self.delegate?.joystickView(joystickView: self, shouldDrag: state) ?? true else { return }
-        
         self.thumbView.center = state.location
-        self.delegate?.joystickView(joystickView: self, didDrag: state)
         self.delegate?.joystickView(joystickView: self, didEndDrag: state)
     }
     

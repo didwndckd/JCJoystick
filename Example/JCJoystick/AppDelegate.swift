@@ -25,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func makeTabBarController() -> UITabBarController {
         // UIKit 샘플 (기존 Main.storyboard)
-        let uikitViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
-            ?? UIViewController()
+        let uikitViewController = JoystickSampleViewController()
         uikitViewController.tabBarItem = UITabBarItem(
             title: "UIKit",
             image: UIImage(systemName: "gamecontroller"),
