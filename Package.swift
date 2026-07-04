@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "JCJoystick",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v15)
     ],
     products: [
         .library(

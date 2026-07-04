@@ -20,10 +20,10 @@ struct JCJoystickStateTests {
     @Test("radian 을 degree 로 변환한다",
           arguments: [
             (CGFloat(0), CGFloat(0)),
-            (.pi / 4, 45),
-            (.pi / 2, 90),
-            (.pi, 180),
-            (-.pi / 2, -90),
+            (CGFloat.pi / 4, 45),
+            (CGFloat.pi / 2, 90),
+            (CGFloat.pi, 180),
+            (-CGFloat.pi / 2, -90),
           ])
     func degree_convertsFromRadian(radian: CGFloat, expected: CGFloat) {
         #expect(abs(state(radian: radian).degree - expected) < 1e-9)
@@ -40,5 +40,10 @@ struct JCJoystickStateTests {
           ])
     func distanceRatio_isDistanceOverRadius(distance: CGFloat, radius: CGFloat, expected: CGFloat) {
         #expect(abs(state(distance: distance, radius: radius).distanceRatio - expected) < 1e-9)
+    }
+
+    @Test("radius 가 0 이면 distanceRatio 는 0 이다 (0 나눗셈 방지)")
+    func distanceRatio_whenRadiusIsZero_returnsZero() {
+        #expect(state(distance: 50, radius: 0).distanceRatio == 0)
     }
 }

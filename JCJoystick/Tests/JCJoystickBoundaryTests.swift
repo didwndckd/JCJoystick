@@ -24,4 +24,14 @@ struct JCJoystickBoundaryTests {
         #expect(abs(boundary.center.x - 100) < 1e-9)
         #expect(abs(boundary.center.y - 50) < 1e-9)
     }
+
+    @Test("init(size:) 는 width/height 이니셜라이저와 동일하게 동작한다")
+    func boundary_initWithSize_matchesWidthHeight() {
+        let boundary = JCJoystickBoundary(size: CGSize(width: 200, height: 100))
+        #expect(abs(boundary.width - 200) < 1e-9)
+        #expect(abs(boundary.height - 100) < 1e-9)
+        #expect(abs(boundary.radius - 50) < 1e-9)
+        #expect(abs(boundary.center.x - 100) < 1e-9)
+        #expect(abs(boundary.center.y - 50) < 1e-9)
+    }
 }
