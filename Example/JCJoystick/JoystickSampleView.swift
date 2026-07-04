@@ -30,8 +30,10 @@ struct JoystickSampleView: View {
         }
     }
 
+    private let joystickSize: CGFloat = 250
+
     @State private var limitOption: LimitStyleOption = .inside
-    @State private var thumbSizeMultiplier: CGFloat = 0.25
+    @State private var thumbDiameter: CGFloat = 50
     @State private var degree: CGFloat = 0
     @State private var radian: CGFloat = 0
     @State private var range: CGFloat = 0
@@ -67,24 +69,22 @@ struct JoystickSampleView: View {
     // MARK: - Joystick
 
     private var joystick: some View {
-        GeometryReader { proxy in
-            let side = min(proxy.size.width, proxy.size.height)
-            let markingOffset: CGFloat = 24
+        let markingOffset: CGFloat = 24
 
-            JCJoystick(
-                thumbLimitStyle: limitOption.style,
-                thumbDiameter: side * thumbSizeMultiplier,
-                boundary: { Circle().strokeBorder(Color(.darkGray), lineWidth: 8) },
-                thumb: { Circle().strokeBorder(Color.gray, lineWidth: 8) },
-                onChanged: onChanged(state:),
-                onEnd: onEnd(state:)
-            )
-            .overlay(alignment: .top) { marking(isVertical: true).offset(y: -markingOffset) }
-            .overlay(alignment: .bottom) { marking(isVertical: true).offset(y: markingOffset) }
-            .overlay(alignment: .leading) { marking(isVertical: false).offset(x: -markingOffset) }
-            .overlay(alignment: .trailing) { marking(isVertical: false).offset(x: markingOffset) }
-        }
-        .padding(60)
+        return JCJoystick(
+            thumbLimitStyle: limitOption.style,
+            thumbDiameter: thumbDiameter,
+            boundary: { Circle().strokeBorder(Color(.darkGray), lineWidth: 8) },
+            thumb: { Circle().strokeBorder(Color.gray, lineWidth: 8) },
+            onChanged: onChanged(state:),
+            onEnd: onEnd(state:)
+        )
+        .frame(width: joystickSize, height: joystickSize)
+        .overlay(alignment: .top) { marking(isVertical: true).offset(y: -markingOffset) }
+        .overlay(alignment: .bottom) { marking(isVertical: true).offset(y: markingOffset) }
+        .overlay(alignment: .leading) { marking(isVertical: false).offset(x: -markingOffset) }
+        .overlay(alignment: .trailing) { marking(isVertical: false).offset(x: markingOffset) }
+        .padding(.vertical, markingOffset)
     }
 
     private func marking(isVertical: Bool) -> some View {
@@ -108,8 +108,8 @@ struct JoystickSampleView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("thumbSizeMultiplier: \(thumbSizeMultiplier)")
-                Slider(value: $thumbSizeMultiplier, in: 0.1...0.9)
+                Text("thumbDiameter: \(thumbDiameter)")
+                Slider(value: $thumbDiameter, in: 1...250)
             }
         }
     }

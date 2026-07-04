@@ -29,13 +29,15 @@ final class JoystickSampleViewController: UIViewController {
         }
     }
 
+    private let joystickSize: CGFloat = 250
+
     // MARK: - Views
 
     private let degreeLabel = UILabel()
     private let radianLabel = UILabel()
     private let rangeLabel = UILabel()
-    private let thumbSizeMultiplierLabel = UILabel()
-    private let thumbSizeMultiplierSlider = UISlider()
+    private let thumbDiameterLabel = UILabel()
+    private let thumbDiameterSlider = UISlider()
     private let joystickView = JCJoystickView()
 
     override func viewDidLoad() {
@@ -44,13 +46,9 @@ final class JoystickSampleViewController: UIViewController {
         self.joystickView.delegate = self
         self.setupLayout()
         self.apply(state: nil)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         self.updateThumbDiameter()
     }
-    
+
     // MARK: - Layout
 
     private func setupLayout() {
@@ -96,14 +94,14 @@ final class JoystickSampleViewController: UIViewController {
         self.joystickView.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(self.joystickView)
 
-        // SwiftUI `.padding(60)` 재현: 모든 변으로 60 인셋 → container 는 정사각.
-        [self.joystickView.topAnchor.constraint(equalTo: container.topAnchor, constant: 60),
-         self.joystickView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -60),
-         self.joystickView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 60),
-         self.joystickView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -60),
-         self.joystickView.widthAnchor.constraint(equalTo: self.joystickView.heightAnchor)].forEach { $0.isActive = true }
-
         let markingOffset: CGFloat = 24
+        // 조이스틱 250 고정, 마킹 여백을 위해 상하로 markingOffset 만큼 인셋.
+        [self.joystickView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+         self.joystickView.topAnchor.constraint(equalTo: container.topAnchor, constant: markingOffset),
+         self.joystickView.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -markingOffset),
+         self.joystickView.widthAnchor.constraint(equalToConstant: self.joystickSize),
+         self.joystickView.heightAnchor.constraint(equalToConstant: self.joystickSize)].forEach { $0.isActive = true }
+
         let top = self.makeMarking(isVertical: true)
         let bottom = self.makeMarking(isVertical: true)
         let leading = self.makeMarking(isVertical: false)
@@ -141,12 +139,12 @@ final class JoystickSampleViewController: UIViewController {
         limitControl.addTarget(self, action: #selector(self.selectedThumbLimitStyle(_:)), for: .valueChanged)
         let limitSection = self.makeSection(title: "thumbLimitStyle", control: limitControl)
 
-        self.thumbSizeMultiplierSlider.minimumValue = 0.1
-        self.thumbSizeMultiplierSlider.maximumValue = 0.9
-        self.thumbSizeMultiplierSlider.value = 0.25
-        self.thumbSizeMultiplierSlider.addTarget(self, action: #selector(self.changeThumbSizeMultiplier(_:)), for: .valueChanged)
-        self.updateThumbSizeMultiplierLabel()
-        let sizeSection = self.makeSection(title: self.thumbSizeMultiplierLabel, control: self.thumbSizeMultiplierSlider)
+        self.thumbDiameterSlider.minimumValue = 1
+        self.thumbDiameterSlider.maximumValue = 250
+        self.thumbDiameterSlider.value = 50
+        self.thumbDiameterSlider.addTarget(self, action: #selector(self.changeThumbDiameter(_:)), for: .valueChanged)
+        self.updateThumbDiameterLabel()
+        let sizeSection = self.makeSection(title: self.thumbDiameterLabel, control: self.thumbDiameterSlider)
 
         let stack = UIStackView(arrangedSubviews: [limitSection, sizeSection])
         stack.axis = .vertical
@@ -179,12 +177,11 @@ final class JoystickSampleViewController: UIViewController {
     // MARK: - Update
 
     private func updateThumbDiameter() {
-        let side = min(self.joystickView.bounds.width, self.joystickView.bounds.height)
-        self.joystickView.thumbDiameter = side * CGFloat(self.thumbSizeMultiplierSlider.value)
+        self.joystickView.thumbDiameter = CGFloat(self.thumbDiameterSlider.value)
     }
 
-    private func updateThumbSizeMultiplierLabel() {
-        self.thumbSizeMultiplierLabel.text = "thumbSizeMultiplier: \(CGFloat(self.thumbSizeMultiplierSlider.value))"
+    private func updateThumbDiameterLabel() {
+        self.thumbDiameterLabel.text = "thumbDiameter: \(CGFloat(self.thumbDiameterSlider.value))"
     }
 
     private func apply(state: JCJoystickState?) {
@@ -200,8 +197,8 @@ final class JoystickSampleViewController: UIViewController {
         self.joystickView.thumbLimitStyle = option.style
     }
 
-    @objc private func changeThumbSizeMultiplier(_ sender: UISlider) {
-        self.updateThumbSizeMultiplierLabel()
+    @objc private func changeThumbDiameter(_ sender: UISlider) {
+        self.updateThumbDiameterLabel()
         self.updateThumbDiameter()
     }
 }
