@@ -27,4 +27,9 @@ public struct JCJoystickBoundary: Sendable {
         self.width = width
         self.height = height
     }
+    
+    public init(size: CGSize) {
+        self.width = size.width
+        self.height = size.height
+    }
 }

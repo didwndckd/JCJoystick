@@ -22,7 +22,6 @@ open class JCJoystickView: UIView {
         self._thumbView
     }
     
-    public var angleValueType: JCAngleType = .degree
     public var thumbLimitStyle: JCThumbLimitStyle = .inside
     
     open var maximumRadius: CGFloat? {
@@ -65,36 +64,41 @@ open class JCJoystickView: UIView {
         self.updateThumbViewSizeConstraint()
     }
     
+    private func createCalculator() -> JCJoystickCalculator {
+        JCJoystickCalculator(
+            boundary: .init(size: boundaryView.bounds.size),
+            thumbSize: thumbView.bounds.size,
+            thumbLimitStyle: thumbLimitStyle
+        )
+    }
+    
     open func beganDrag(location: CGPoint) {
-        let dragValue = self.dragValue(location: location)
-        let value = self.joystickValue(radian: dragValue.radian, movementRange: dragValue.moveMentRange)
+        let state = createCalculator().calculate(location: location)
         
-        guard self.delegate?.joystickView(joystickView: self, shouldDrag: value) ?? true else { return }
+        guard self.delegate?.joystickView(joystickView: self, shouldDrag: state) ?? true else { return }
         
-        self.thumbView.center = dragValue.point
-        self.delegate?.joystickView(joystickView: self, beganDrag: value)
-        self.delegate?.joystickView(joystickView: self, didDrag: value)
+        self.thumbView.center = state.location
+        self.delegate?.joystickView(joystickView: self, beganDrag: state)
+        self.delegate?.joystickView(joystickView: self, didDrag: state)
     }
     
     open func dragging(location: CGPoint) {
-        let dragValue = self.dragValue(location: location)
-        let value = self.joystickValue(radian: dragValue.radian, movementRange: dragValue.moveMentRange)
+        let state = createCalculator().calculate(location: location)
         
-        guard self.delegate?.joystickView(joystickView: self, shouldDrag: value) ?? true else { return }
+        guard self.delegate?.joystickView(joystickView: self, shouldDrag: state) ?? true else { return }
         
-        self.thumbView.center = dragValue.point
-        self.delegate?.joystickView(joystickView: self, didDrag: value)
+        self.thumbView.center = state.location
+        self.delegate?.joystickView(joystickView: self, didDrag: state)
     }
     
     open func endDrag() {
-        let dragValue = self.dragValue(location: self.boundaryView.centerPoint)
-        let value = self.joystickValue(radian: dragValue.radian, movementRange: dragValue.moveMentRange)
+        let state = createCalculator().calculate(location: self.boundaryView.centerPoint)
         
-        guard self.delegate?.joystickView(joystickView: self, shouldDrag: value) ?? true else { return }
+        guard self.delegate?.joystickView(joystickView: self, shouldDrag: state) ?? true else { return }
         
-        self.thumbView.center = dragValue.point
-        self.delegate?.joystickView(joystickView: self, didDrag: value)
-        self.delegate?.joystickView(joystickView: self, didEndDrag: value)
+        self.thumbView.center = state.location
+        self.delegate?.joystickView(joystickView: self, didDrag: state)
+        self.delegate?.joystickView(joystickView: self, didEndDrag: state)
     }
     
 }
@@ -164,62 +168,6 @@ extension JCJoystickView {
         self.thumbViewDiameterConstraint.constant = constant
         self.layoutIfNeeded()
     }
-    
-    private func dragValue(location: CGPoint) -> DragValue {
-        let center = self.boundaryView.centerPoint
-        let currentDistance = self.straightDistance(center: center, location: location)
-        let radian = self.radian(center: center, location: location)
-        
-        let newPoint: CGPoint
-        let moveMentRange: CGFloat
-        
-        if let maximumRadius = self.maximumRadius, maximumRadius < currentDistance {
-            newPoint = self.maximumPoint(center: center, radius: maximumRadius, radian: radian)
-            moveMentRange = 1
-        } else {
-            newPoint = location
-            moveMentRange = currentDistance / (self.maximumRadius ?? self.boundaryView.radius)
-        }
-        
-        return DragValue(point: newPoint, moveMentRange: moveMentRange, radian: radian)
-    }
-    
-    private func joystickValue(radian: CGFloat, movementRange: CGFloat) -> JCJoystickValue {
-        let angleValue: CGFloat
-        
-        switch self.angleValueType {
-        case .degree:
-            angleValue = radian * (180 / .pi)
-        case .radian:
-            angleValue = radian
-        }
-        
-        return JCJoystickValue(angle: angleValue, movementRange: movementRange)
-    }
-    
-    private func maximumPoint(center: CGPoint, radius: CGFloat, radian: CGFloat) -> CGPoint {
-        let x = center.x + (radius * cos(radian))
-        let y = center.y + (radius * sin(radian))
-        return CGPoint(x: x, y: y)
-    }
-    
-    private func radian(center: CGPoint, location: CGPoint) -> CGFloat {
-        let gap = self.gap(center: center, location: location)
-        return atan2(gap.height, gap.width)
-    }
-    
-    private func gap(center: CGPoint, location: CGPoint) -> CGSize {
-        let horizontal = location.x - center.x
-        let vertical = location.y - center.y
-        return CGSize(width: horizontal, height: vertical)
-    }
-    
-    private func straightDistance(center: CGPoint, location: CGPoint) -> CGFloat {
-        let gap = self.gap(center: center, location: location)
-        let squaredX = gap.width * gap.width
-        let squaredY = gap.height * gap.height
-        return sqrt(squaredX + squaredY)
-    }
 }
 
 extension JCJoystickView {
@@ -252,13 +200,5 @@ extension JCJoystickView: JCJoystickBoundaryViewDelegate {
         case .end:
             self.endDrag()
         }
-    }
-}
-
-extension JCJoystickView {
-    struct DragValue {
-        let point: CGPoint
-        let moveMentRange: CGFloat
-        let radian: CGFloat
     }
 }

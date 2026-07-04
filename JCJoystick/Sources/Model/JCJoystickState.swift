@@ -20,5 +20,8 @@ public struct JCJoystickState: Sendable {
     /// 각도(degree)
     public var degree: CGFloat { radian * (180 / .pi) }
     /// 중심에서 location까지의 거리 비율
-    public var distanceRatio: CGFloat { distance / radius }
+    public var distanceRatio: CGFloat {
+        guard radius != 0 else { return 0 }
+        return distance / radius
+    }
 }
