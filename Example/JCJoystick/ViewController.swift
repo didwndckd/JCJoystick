@@ -11,17 +11,11 @@ import JCJoystick
 
 final class ViewController: UIViewController {
 
-    private enum AngleType {
-        case degree
-        case radian
-    }
-
-    @IBOutlet private weak var angleLabel: UILabel!
+    @IBOutlet private weak var degreeLabel: UILabel!
+    @IBOutlet private weak var radianLabel: UILabel!
     @IBOutlet private weak var rangeLabel: UILabel!
     @IBOutlet private weak var joystickView: JCJoystickView!
     @IBOutlet private weak var thumbDiameterMultiplierLabel: UILabel!
-
-    private var angleType: AngleType = .degree
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,14 +30,14 @@ final class ViewController: UIViewController {
     private func setupUI() {
         self.joystickView.delegate = self
         self.resetLog()
-        
+
         let boundaryView = self.joystickView.boundaryView
         let topMarkingView = createMarkingView(isVertical: true)
         let bottomMarkingView = createMarkingView(isVertical: true)
         let leadingMarkingView = createMarkingView(isVertical: false)
         let trailingMarkingView = createMarkingView(isVertical: false)
         [topMarkingView, bottomMarkingView, leadingMarkingView, trailingMarkingView].forEach { boundaryView.insertSubview($0, at: 0) }
-        
+
         [topMarkingView.centerXAnchor.constraint(equalTo: boundaryView.centerXAnchor),
          topMarkingView.bottomAnchor.constraint(equalTo: boundaryView.topAnchor, constant: -4),
          bottomMarkingView.centerXAnchor.constraint(equalTo: boundaryView.centerXAnchor),
@@ -53,14 +47,14 @@ final class ViewController: UIViewController {
          trailingMarkingView.centerYAnchor.constraint(equalTo: boundaryView.centerYAnchor),
          trailingMarkingView.leadingAnchor.constraint(equalTo: boundaryView.trailingAnchor, constant: 4)].forEach { $0.isActive = true }
     }
-    
+
     private func createMarkingView(isVertical: Bool) -> UIView {
         let view = UIView()
         view.backgroundColor = .black
         view.layer.cornerRadius = 3
-        
+
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         if isVertical {
             view.widthAnchor.constraint(equalToConstant: 6).isActive = true
             view.heightAnchor.constraint(equalToConstant: 16).isActive = true
@@ -68,42 +62,20 @@ final class ViewController: UIViewController {
             view.widthAnchor.constraint(equalToConstant: 16).isActive = true
             view.heightAnchor.constraint(equalToConstant: 6).isActive = true
         }
-        
+
         return view
     }
 
     private func log(state: JCJoystickState) {
-        switch self.angleType {
-        case .degree:
-            self.angleLabel.text = "degree: \(state.degree)"
-        case .radian:
-            self.angleLabel.text = "radian: \(state.radian)"
-        }
-
+        self.degreeLabel.text = "degree: \(state.degree)"
+        self.radianLabel.text = "radian: \(state.radian)"
         self.rangeLabel.text = "range: \(state.distanceRatio)"
     }
 
     private func resetLog() {
-        switch self.angleType {
-        case .degree:
-            self.angleLabel.text = "degree: 0.0"
-        case .radian:
-            self.angleLabel.text = "radian: 0.0"
-        }
-
+        self.degreeLabel.text = "degree: 0.0"
+        self.radianLabel.text = "radian: 0.0"
         self.rangeLabel.text = "range: 0.0"
-    }
-
-    @IBAction private func selectedAngleType(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            self.angleType = .degree
-        case 1:
-            self.angleType = .radian
-        default:
-            break
-        }
-        self.resetLog()
     }
     
     

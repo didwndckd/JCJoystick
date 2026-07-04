@@ -24,23 +24,6 @@ open class JCJoystickView: UIView {
     
     public var thumbLimitStyle: JCThumbLimitStyle = .inside
     
-    open var maximumRadius: CGFloat? {
-        switch self.thumbLimitStyle {
-        case .inside:
-            return self.boundaryView.radius - self.thumbView.radius
-        case .outside:
-            return self.boundaryView.radius + self.thumbView.radius
-        case .center:
-            return self.boundaryView.radius
-        case .customWithConstant(constant: let constant):
-            return self.boundaryView.radius + constant
-        case .customWithMultiplier(multiplier: let multiplier):
-            return self.boundaryView.radius * multiplier
-        case .unlimited:
-            return nil
-        }
-    }
-    
     public var thumbSizeMultiplier: CGFloat = 0.25 {
         didSet {
             self.updateThumbViewSizeConstraint()
@@ -104,32 +87,13 @@ open class JCJoystickView: UIView {
 }
 
 extension JCJoystickView {
-    
-    private var defaultBoundaryImage: UIImage {
-        return self.createDefaultImage(borderColor: .darkGray, borderWidth: 8)
-    }
-    
-    private var defaultThumbImage: UIImage {
-        return self.createDefaultImage(borderColor: .gray, borderWidth: 20)
-    }
-    
-    private func createDefaultImage(borderColor: UIColor, borderWidth: CGFloat) -> UIImage {
-        let imageSize = CGSize(width: 200, height: 200)
-        let view = UIView(frame: .init(origin: .zero, size: imageSize))
-        view.backgroundColor = .white
-        view.layer.cornerRadius = imageSize.height / 2
-        view.layer.borderWidth = borderWidth
-        view.layer.borderColor = borderColor.cgColor
-        let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
-        return renderer.image { rendererContext in
-            view.layer.render(in: rendererContext.cgContext)
-        }
-    }
-    
     private func setupAttribute() {
-        self._boundaryView.image = self.defaultBoundaryImage
-        self._thumbView.image = self.defaultThumbImage
+        self._boundaryView.layer.borderColor = UIColor.darkGray.cgColor
+        self._boundaryView.layer.borderWidth = 8
         self._boundaryView.delegate = self
+        
+        self._thumbView.layer.borderColor = UIColor.gray.cgColor
+        self._thumbView.layer.borderWidth = 8
     }
     
     private func setupLayout() {
