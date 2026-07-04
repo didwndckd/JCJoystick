@@ -24,12 +24,6 @@ open class JCJoystickView: UIView {
     
     public var thumbLimitStyle: JCThumbLimitStyle = .inside
     
-    public var thumbSizeMultiplier: CGFloat = 0.25 {
-        didSet {
-            self.updateThumbViewSizeConstraint()
-        }
-    }
-
     public override init(frame: CGRect) {
         super.init(frame: frame)
         self.setupAttribute()
@@ -42,15 +36,10 @@ open class JCJoystickView: UIView {
         self.setupLayout()
     }
     
-    open override func layoutSubviews() {
-        super.layoutSubviews()
-        self.updateThumbViewSizeConstraint()
-    }
-    
     private func createCalculator() -> JCJoystickCalculator {
         JCJoystickCalculator(
             boundary: .init(size: boundaryView.bounds.size),
-            thumbSize: thumbView.bounds.size,
+            thumbDiameter: thumbDiameter,
             thumbLimitStyle: thumbLimitStyle
         )
     }
@@ -125,16 +114,17 @@ extension JCJoystickView {
          self.thumbViewDiameterConstraint,
          self.thumbView.heightAnchor.constraint(equalTo: self.thumbView.widthAnchor)].forEach { $0.isActive = true }
     }
-    
-    private func updateThumbViewSizeConstraint() {
-        let multiplier = self.thumbSizeMultiplier <= 1 ? self.thumbSizeMultiplier: 1
-        let constant = self.boundaryView.bounds.width * multiplier
-        self.thumbViewDiameterConstraint.constant = constant
-        self.layoutIfNeeded()
-    }
 }
 
 extension JCJoystickView {
+    public var thumbDiameter: CGFloat {
+        get { min(thumbView.bounds.width, thumbView.bounds.height) }
+        set {
+            self.thumbViewDiameterConstraint.constant = newValue
+            self.layoutIfNeeded()
+        }
+    }
+    
     public var boundaryImage: UIImage? {
         get { self._boundaryView.image }
         set { self._boundaryView.image = newValue }

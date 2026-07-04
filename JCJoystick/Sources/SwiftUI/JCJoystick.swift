@@ -85,7 +85,7 @@ public struct JCJoystick<Boundary: View, Thumb: View>: View {
     private func calculate(location: CGPoint, side: CGFloat, thumbDiameter: CGFloat) -> JCJoystickState {
         JCJoystickCalculator(
             boundary: .init(width: side, height: side),
-            thumbSize: .init(width: thumbDiameter, height: thumbDiameter),
+            thumbDiameter: thumbDiameter,
             thumbLimitStyle: thumbLimitStyle
         ).calculate(location: location)
     }

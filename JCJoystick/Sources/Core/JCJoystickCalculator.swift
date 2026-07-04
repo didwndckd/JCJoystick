@@ -11,20 +11,20 @@ import Foundation
 public struct JCJoystickCalculator {
     public let boundary: JCJoystickBoundary
     public let thumbLimitStyle: JCThumbLimitStyle
-    public let thumbSize: CGSize
-    
-    public init(boundary: JCJoystickBoundary, thumbSize: CGSize, thumbLimitStyle: JCThumbLimitStyle) {
+    public let thumbDiameter: CGFloat
+
+    public init(boundary: JCJoystickBoundary, thumbDiameter: CGFloat, thumbLimitStyle: JCThumbLimitStyle) {
         self.boundary = boundary
         self.thumbLimitStyle = thumbLimitStyle
-        self.thumbSize = thumbSize
+        self.thumbDiameter = thumbDiameter
     }
 }
 
 extension JCJoystickCalculator {
     /// 계산 기준이 되는 중심점 (boundarySize 기준)
     private var center: CGPoint { boundary.center }
-    /// 조이스틱 사이즈
-    private var thumbRadius: CGFloat { min(thumbSize.width, thumbSize.height) / 2 }
+    /// thumb 반지름
+    private var thumbRadius: CGFloat { thumbDiameter / 2 }
     /// 최대 이동 반경
     private var maximumRadius: CGFloat? { thumbLimitStyle.maximumRadius(boundaryRadius: boundary.radius, thumbRadius: thumbRadius) }
     /// distanceRatio 분모 기준 반경. 무제한이면 boundaryRadius 로 fallback.

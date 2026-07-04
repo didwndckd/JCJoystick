@@ -11,11 +11,11 @@ struct JCJoystickCalculatorTests {
 
     // 고정 조건:
     //   boundary 200x200 → center (100,100), boundaryRadius 100
-    //   thumb 40x40      → thumbRadius 20
+    //   thumb 지름 40     → thumbRadius 20
     private func calculator(_ style: JCThumbLimitStyle) -> JCJoystickCalculator {
         JCJoystickCalculator(
             boundary: JCJoystickBoundary(width: 200, height: 200),
-            thumbSize: CGSize(width: 40, height: 40),
+            thumbDiameter: 40,
             thumbLimitStyle: style
         )
     }
